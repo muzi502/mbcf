@@ -1,18 +1,18 @@
 #!/bin/bash
 # for: bulk merge bilibili UWP download file *.flv
-# by: muzi502 blog.502.li
+# by: blog.502.li
 # date: 2019-01-12
+# 将该脚放到 UWP 客户端下载缓存主目录下执行，安装 ffmpeg、jq
 
 set -xu
-start_time=$(date)
 root_dir=$(pwd)
 mp4_dir=${root_dir}/mp4
-mkdir -p ${root_dir}/mp4
+mkdir -p ${mp4_dir}
 
-for dir in $(ls | sort -n | grep -v .sh | grep -v mp4)
+for dir in $(ls | sort -n | grep -E -v "\.|mp4")
 do
   cd ${root_dir}/${dir}
-  for p_dir in $(ls | sort -n | grep -E -v ".dvi|.jpg|.ini|.mp4|.txt")
+  for p_dir in $(ls | sort -n | grep -v "\.")
   do
     cd ${root_dir}/${dir}/${p_dir}
     video_name=$(jq ".Title" *.info | tr -d "[:punct:]\040\011\012\015")
