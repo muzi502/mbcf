@@ -12,20 +12,23 @@ mkdir -p ${mp4_dir}
 for dir in $(ls | sort -n | grep -E -v "\.|mp4")
 do
   cd ${root_dir}/${dir}
+  up_name=$(jq ".Uploader" *.dvi | tr -d "[:punct:]\040\011\012\015")
+  mkdir -p ${mp4_dir}/${up_name}
   for p_dir in $(ls | sort -n | grep -v "\.")
   do
     cd ${root_dir}/${dir}/${p_dir}
     video_name=$(jq ".Title" *.info | tr -d "[:punct:]\040\011\012\015")
     part_name=$(jq ".PartName" *.info | tr -d "[:punct:]\040\011\012\015")
     upload_time=$(grep -Eo "20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]" *.info)
+    Uploader=$(jq ".Uploader" *.info | tr -d "[:punct:]\040\011\012\015")
     if [ "null" = "${part_name}" ];then
-      mp4_file_name=${upload_time}_${video_name}.mp4
+      mp4_file_name=${video_name}.mp4
     else
-      mp4_file_name=${upload_time}_${video_name}_${p_dir}_${part_name}.mp4
+      mp4_file_name=${video_name}_${p_dir}_${part_name}.mp4
     fi
     ls *.flv | sort -n > ff.txt
     sed -i 's/^/file /g' ff.txt
-    ffmpeg -f concat -i ff.txt -c copy ${mp4_dir}/"${mp4_file_name}";rm -rf ff.txt
+    ffmpeg -f concat -i ff.txt -c copy ${mp4_dir}/${up_name}/"${mp4_file_name}";rm -rf ff.txt
     cd ${root_dir}/${dir}
   cd ${root_dir}
   done
