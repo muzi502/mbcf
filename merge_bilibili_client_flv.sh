@@ -21,7 +21,7 @@ do
     part_name=$(jq ".PartName" *.info | tr -d "[:punct:]\040\011\012\015")
     upload_time=$(grep -Eo "20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]" *.info)
     Uploader=$(jq ".Uploader" *.info | tr -d "[:punct:]\040\011\012\015")
-    mp4_audio=$(jq ".VideoDashInfo" *.info | tr -d "[:punct:]\040\011\012\015")
+    Format=$(jq ".Format" *.info | tr -d "[:punct:]\040\011\012\015")
     
     if [ "null" = "${part_name}" ];then
       mp4_file_name=${video_name}.mp4
@@ -29,7 +29,7 @@ do
       mp4_file_name=${video_name}_${p_dir}_${part_name}.mp4
     fi
 
-    if [ "null" = "${mp4_audio}" ];then
+    if [ "1" = "${Format}" ];then
       ls *.flv | sort -n > ff.txt
       sed -i 's/^/file /g' ff.txt
       ffmpeg -f concat -i ff.txt -c copy ${mp4_dir}/${up_name}/"${mp4_file_name}";rm -rf ff.txt
